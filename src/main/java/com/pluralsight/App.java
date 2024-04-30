@@ -31,7 +31,7 @@ public class App {
         }
         LocalDateTime dateTime = LocalDateTime.now();
         Transaction deposit = new Transaction(dateTime, description, vendor, amount);
-        // TODO: save transaction
+        saveTransaction(deposit);
         System.out.println("Deposit added successfully.");
     }
 
@@ -59,12 +59,56 @@ public class App {
             }
         }
         Transaction payment = new Transaction(dateTime, description, vendor, amount);
-        // TODO: save transaction
+        saveTransaction(payment);
         System.out.println("Payment made successfully.");
     }
 
-    private static void displayLedger(Scanner scanner) {
+    private static void saveTransaction(Transaction transaction) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(CSV_FILE, true))) {
+            File file = new File(CSV_FILE);
+            if (!file.exists()) {
+                writer.println(CSV_HEADER);
+            }
+            writer.println(transaction);
+        } catch (IOException e) {
+            System.out.println("Error saving transaction: " + e.getMessage());
+        }
+    }
+
+    private static void ledgerMenu(Scanner scanner) {
         // Implement ledger display logic here
+        boolean inLedgerMenu = true;
+
+        while (inLedgerMenu) {
+            System.out.println("=== Ledger ===");
+            System.out.println("A) All");
+            System.out.println("D) Deposits");
+            System.out.println("P) Payments");
+            System.out.println("R) Reports");
+            System.out.println("H) Home");
+            System.out.print("Choose an option: ");
+            String option = scanner.nextLine().trim().toUpperCase();
+
+            switch (option) {
+                case "A":
+                    Ledger.displayLedger("All");
+                    break;
+                case "D":
+                    Ledger.displayLedger("Deposits");
+                    break;
+                case "P":
+                    Ledger.displayLedger("Payments");
+                    break;
+                case "R":
+                    Ledger.reportsMenu(scanner);
+                    break;
+                case "H":
+                    inLedgerMenu = false;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -88,7 +132,7 @@ public class App {
                     makePayment(scanner);
                     break;
                 case "L":
-                    displayLedger(scanner);
+                    ledgerMenu(scanner);
                     break;
                 case "X":
                     running = false;
