@@ -13,9 +13,22 @@ public class App {
         String description = scanner.nextLine().trim();
         System.out.print("Enter vendor: ");
         String vendor = scanner.nextLine().trim();
-        System.out.print("Enter amount: ");
-        double amount = scanner.nextDouble();
-        scanner.nextLine();
+        double amount = 0;
+        boolean validAmount = false;
+        while (!validAmount) {
+            try {
+                System.out.print("Enter amount: ");
+                amount = Double.parseDouble(scanner.nextLine());
+                if (amount < 0) {
+                    throw new IllegalArgumentException("Amount must be a positive number.");
+                }
+                validAmount = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid amount. Pleadse enter a valid number.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
         LocalDateTime dateTime = LocalDateTime.now();
         Transaction deposit = new Transaction(dateTime, description, vendor, amount);
         // TODO: save transaction
@@ -23,7 +36,31 @@ public class App {
     }
 
     private static void makePayment(Scanner scanner) {
-        // Implement payment logic here
+        System.out.println("=== Make Payment (Debit) ===");
+        System.out.print("Enter description: ");
+        String description = scanner.nextLine().trim();
+        System.out.print("Enter vendor: ");
+        String vendor = scanner.nextLine().trim();
+        LocalDateTime dateTime = LocalDateTime.now();
+        double amount = 0;
+        boolean validAmount = false;
+        while (!validAmount) {
+            try {
+                System.out.print("Enter amount: ");
+                amount = Double.parseDouble(scanner.nextLine());
+                if (amount >= 0) {
+                    throw new IllegalArgumentException("Amount must be a negative number.");
+                }
+                validAmount = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid amount. Please enter a valid number.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        Transaction payment = new Transaction(dateTime, description, vendor, amount);
+        // TODO: save transaction
+        System.out.println("Payment made successfully.");
     }
 
     private static void displayLedger(Scanner scanner) {
