@@ -64,9 +64,10 @@ public class App {
     }
 
     private static void saveTransaction(Transaction transaction) {
+        File file = new File(CSV_FILE);
+        boolean fileExists = file.exists();
         try (PrintWriter writer = new PrintWriter(new FileWriter(CSV_FILE, true))) {
-            File file = new File(CSV_FILE);
-            if (!file.exists()) {
+            if (!fileExists) {
                 writer.println(CSV_HEADER);
             }
             writer.println(transaction);
